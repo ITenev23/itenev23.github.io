@@ -161,7 +161,7 @@ function Cv() {
                   <span className="font-semibold">{r.title}</span>
                   <span className={muted}>
                     {" "}
-                    —{" "}
+                    -{" "}
                     {r.projects.length ? (
                       <a href={href(`/projects/${r.projects[0]}`)} className="hover:text-matrix">
                         {r.company}
@@ -185,7 +185,7 @@ function Cv() {
                   <span className="font-semibold">{e.degree}</span>
                   <span className={muted}>
                     {" "}
-                    — {[e.school, e.location].filter(Boolean).join(", ")}
+                    - {[e.school, e.location].filter(Boolean).join(", ")}
                     {e.note ? ` · ${e.note}` : ""}
                   </span>
                 </li>
@@ -205,7 +205,7 @@ function Cv() {
                 </a>
                 <span className={muted}>
                   {" "}
-                  — {c.issuer}, {c.year}
+                  - {c.issuer}, {c.year}
                 </span>
               </li>
             ))}
@@ -314,7 +314,7 @@ function ProjectEntry({ p, href }: { p: Project; href: string }) {
           >
             {p.name}
           </a>
-          <span className={`font-normal ${muted}`}> — {p.role}</span>
+          <span className={`font-normal ${muted}`}> - {p.role}</span>
         </h3>
         <p className={`break-after-avoid text-sm italic print:text-[9pt] ${muted}`}>{p.domain}</p>
         <p className="mt-1.5 leading-relaxed print:leading-snug">{summary}</p>

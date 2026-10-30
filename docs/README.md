@@ -65,9 +65,9 @@ flowchart LR
 | Fonts          | **Fontsource**, self-hosted           | 5.3         | Inter Tight (variable) and JetBrains Mono 400/600; browsers fetch only the Latin files      |
 | Lint + format  | **Biome**                             | 2.5         | One tool for lint and format                                                                |
 | Tests          | **Vitest**                            | 5.0         | 143 content and diagram integrity tests, publishing-safety checks                           |
-| CI/CD          | **GitHub Actions** → **GitHub Pages** | —           | Lint → typecheck → test → build → deploy, on `master` only                                  |
+| CI/CD          | **GitHub Actions** → **GitHub Pages** | -           | Lint → typecheck → test → build → deploy, on `master` only                                  |
 | CV PDF         | **puppeteer-core** + system Chrome    | 25          | Prints `/cv` to `resume.pdf` at build time                                                  |
-| Tooling        | pnpm 9, Node ≥ 22.12                  | —           | `.nvmrc`, frozen lockfile in CI                                                             |
+| Tooling        | pnpm 9, Node ≥ 22.12                  | -           | `.nvmrc`, frozen lockfile in CI                                                             |
 
 Not dependencies, used locally for checks: headless Chrome via puppeteer-core (screenshots,
 hover-stability sampling) and Lighthouse 12.
