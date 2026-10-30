@@ -1,4 +1,4 @@
-# Portfolio — Architecture & Roadmap
+# Portfolio - Architecture & Roadmap
 
 Design reasoning for the site. For the full list of technologies, features, current numbers
 and the improvement backlog, see the [docs README](README.md); for the reasoning behind each
