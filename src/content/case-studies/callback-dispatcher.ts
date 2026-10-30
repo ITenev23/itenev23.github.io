@@ -1,0 +1,117 @@
+import type { CaseStudyInput } from "../schema";
+
+export const callbackDispatcher: CaseStudyInput = {
+  slug: "callback-dispatcher",
+  project: "insurance-api",
+  title: "One public webhook URL for every environment",
+  tagline:
+    "Providers allow a handful of callback URLs; the platform has many environments. A small service routes each callback to the right one.",
+  role: "Designed and built",
+  featured: true,
+  accent: "#00c43a",
+  skills: [
+    "java",
+    "spring-boot",
+    "integration-design",
+    "api-security",
+    "kong",
+    "docker",
+    "testing",
+  ],
+  context:
+    "Third-party providers call back into the platform: e-signature when a quote is signed, the identity provider on identity events. The platform has many environments (development, integration, hotfix, pre-production, production), but each provider offers only a limited number of callback URLs, so they can't be pointed at each environment separately.",
+  constraints: [
+    "Providers allow only a few callback URLs",
+    "Callbacks must never cross environments, such as production events reaching a test environment",
+    "Callbacks still have to pass the gateway's authentication and ACLs",
+  ],
+  approach: [
+    "A controller that extracts an environment indicator from the callback payload.",
+    "A router that forwards through that environment's gateway host with a per-consumer key, so the gateway's policies still apply.",
+    "Per-environment enable flags, so an environment can be switched off safely.",
+    "E2E tests, logging and a container image from the start.",
+    "Tried passing the gateway host as a request parameter, found it unsuitable and reverted it; later added an environment-switch variable.",
+    "Adapted the business API's subscription-event handling to compare URLs correctly when the dispatcher is in the path.",
+    "Later upgraded it to Java 21 and vault-based properties.",
+  ],
+  decisions: [
+    {
+      title: "Route by payload, not by URL",
+      why: "With one URL per provider, the only place the target environment can live is inside the callback itself.",
+      tradeoff: "One extra hop, and the dispatcher must understand each provider's payload.",
+    },
+    {
+      title: "Go through the gateway, not around it",
+      why: "Forwarding via each environment's gateway host keeps authentication, ACLs and logging exactly as if the provider had called directly.",
+      tradeoff: "A dependency on the gateway being reachable per environment.",
+    },
+    {
+      title: "Enable flags per environment",
+      why: "An environment that shouldn't receive callbacks can be switched off without a deploy.",
+      tradeoff: "One more piece of configuration per environment.",
+    },
+  ],
+  outcomes: [
+    { metric: "public webhook endpoint", value: "1" },
+    { metric: "provider-side changes per environment", value: "0" },
+    { metric: "commits, from the first one", value: "~21" },
+  ],
+  architecture: {
+    direction: "LR",
+    nodes: [
+      {
+        id: "providers",
+        label: "Providers",
+        sub: "e-signature · identity",
+        kind: "external",
+        owner: "external",
+        x: 0,
+        y: 1,
+      },
+      {
+        id: "dispatcher",
+        label: "Callback dispatcher",
+        sub: "env from payload · enable flags",
+        kind: "service",
+        owner: "built",
+        x: 1.7,
+        y: 1,
+      },
+      { id: "gw-dev", label: "Gateway · dev", kind: "gateway", owner: "platform", x: 3.4, y: 0 },
+      {
+        id: "gw-preprod",
+        label: "Gateway · pre-production",
+        kind: "gateway",
+        owner: "platform",
+        x: 3.4,
+        y: 1,
+      },
+      {
+        id: "gw-prod",
+        label: "Gateway · production",
+        kind: "gateway",
+        owner: "platform",
+        x: 3.4,
+        y: 2,
+      },
+      {
+        id: "bapi",
+        label: "Business API",
+        sub: "per environment",
+        kind: "service",
+        owner: "built",
+        x: 5.1,
+        y: 1,
+      },
+    ],
+    edges: [
+      { from: "providers", to: "dispatcher", kind: "http", label: "one URL" },
+      { from: "dispatcher", to: "gw-dev", kind: "http" },
+      { from: "dispatcher", to: "gw-preprod", kind: "http" },
+      { from: "dispatcher", to: "gw-prod", kind: "http" },
+      { from: "gw-dev", to: "bapi", kind: "http" },
+      { from: "gw-preprod", to: "bapi", kind: "http" },
+      { from: "gw-prod", to: "bapi", kind: "http" },
+    ],
+  },
+};
