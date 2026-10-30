@@ -1,0 +1,92 @@
+import type { ProjectInput } from "../schema";
+import { auctionSaasArchitecture } from "./auction-saas-architecture";
+
+export const auctionSaas: ProjectInput = {
+  slug: "auction-saas",
+  featured: true,
+  name: "Multi-tenant SaaS platform for the auction, appraisal & inspection industry",
+  domain: "Equipment & vehicle workspaces · valuation data platform",
+  role: "Senior Full-Stack Engineer",
+  accent: "#00ff41",
+  summary:
+    "Companies use it to manage workspaces of equipment and vehicles with photos, documents and permissions, publish them to external auction platforms, and enrich them with AI services from the company's valuation data platform. I work across all of it: the Spring Boot backend, the Angular apps, and the event-driven AWS layer with its Python Lambdas.",
+  highlights: [
+    "2nd-largest backend contributor (1,190 commits), plus the frontend, the admin app and six Lambdas I built",
+    "Built the export Lambdas (SAM, Liquidity, GO, ZIP) and the resumable pattern they share",
+    "Production investigations behind client questions through CloudWatch, and the logging that makes them quick",
+    "Found 1.23 TB of orphaned client files and replaced the silent cleanup with durable deletion jobs",
+    "Own the application side of the PIQ AI integration; requirements and evaluation on the Price Predictor",
+    "Daily Claude Code practice, with the agent context and docs for nine repositories",
+    "Upgraded the backend to Spring Boot 3.4 and Java 21 (441 files, ready in a pull request)",
+  ],
+  skills: [
+    "java",
+    "spring-boot",
+    "python",
+    "angular",
+    "typescript",
+    "ag-grid",
+    "aws-lambda",
+    "aws",
+    "eventbridge-sqs",
+    "mysql",
+    "mongodb",
+    "redis",
+    "postgresql",
+    "event-driven",
+    "resilience",
+    "multi-tenant",
+    "investigations",
+    "observability",
+    "feature-flags",
+    "ai-assisted",
+    "context-engineering",
+    "ai-evaluation",
+    "ai-integration",
+    "documentation",
+  ],
+  footprint: [
+    { metric: "backend commits · 2nd-largest contributor", value: "1,190" },
+    { metric: "Lambdas I built: four exporters, deletion, CRM sync", value: "6" },
+    { metric: "backend commits shaping warning-level logging are mine", value: "197 / 274" },
+    { metric: "reference docs and agent context files I wrote", value: "70+" },
+  ],
+  delivered: [
+    {
+      title: "Java 11 → 21, Spring Boot 2.2 → 3.4",
+      body: "Upgraded the AIM backend: Spring Boot 2.2 → 3.4, Gradle 6 → 8.14, a Java 21 runtime, and the javax → jakarta move across 429 imports in 441 files. Kept in step with the main branch for months; ready in a pull request, not deployed yet.",
+      status: "ready",
+    },
+    {
+      title: "Production investigations",
+      body: "Client questions and incidents traced through CloudWatch Logs Insights across the backend and the Lambdas, then answered or turned into fixes.",
+      status: "ongoing",
+    },
+    {
+      title: "Logging made signal-heavy",
+      body: "Warnings for what matters, durations for long jobs, structured JSON in the exporters. 197 of the 274 backend commits that touch warning-level logging are mine.",
+      status: "shipped",
+    },
+    {
+      title: "Vendor fault reports and runbooks",
+      body: "Investigations written up so a vendor could act on them, and so the next person can repeat them.",
+      status: "shipped",
+    },
+    {
+      title: "Release notes and regression maps",
+      body: "Release notes for platform releases and a reusable regression map of the core features for release testing.",
+      status: "ongoing",
+    },
+    {
+      title: "PIQ product documentation",
+      body: "Author of the product pages for PIQ: what it does, its data, monitoring, CSV templates and photo management.",
+      status: "shipped",
+    },
+    {
+      title: "Agent context and reference docs",
+      body: "CLAUDE.md and reference docs across nine repositories: 70+ documents I wrote, kept current with the code.",
+      status: "ongoing",
+    },
+  ],
+  architecture: auctionSaasArchitecture,
+};

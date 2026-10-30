@@ -1,0 +1,51 @@
+import type { ProjectInput } from "../schema";
+import { insuranceArchitecture } from "./insurance-architecture";
+
+export const insuranceApi: ProjectInput = {
+  slug: "insurance-api",
+  featured: true,
+  name: "Insurance API platform",
+  domain: "Fintech · individual health and employer group insurance",
+  role: "Senior Backend Engineer · Solution Architect",
+  accent: "#00e65c",
+  summary:
+    "An insurance platform for individual health cover and employer group contracts, serving members, employers, partners and back-office staff. At its centre is the business API I own: about 370 use cases exposed as versioned REST APIs and RabbitMQ flows, hiding 29 very different systems (CRM, the core insurance system, payments, e-signature, OCR, document archive, HR, marketing and ticketing) reached over REST, SOAP and JDBC.",
+  highlights: [
+    "Primary owner of the business API: about 1,320 of my 1,400+ commits and 640 tickets",
+    "Raised test coverage from 30-40% to about 80% with new unit and end-to-end tests, and fixed every SonarQube issue: 0 bugs, 0 vulnerabilities, 0 security hotspots",
+    "Led the move from Java 11 / Spring Boot 2 to Java 21 / Spring Boot 3.5 across six services and tools plus the shared BOM",
+    "29 external systems behind one API, each isolated in its own module with its own error mapping and health check",
+    "80+ RabbitMQ queues with per-queue retry delays, dead-letter queues and fan-out partitioned by person",
+    "Designed and built the callback dispatcher: one public webhook URL routed to the right environment",
+    "API lifecycle: versioning, a deprecation programme (25 of 26 endpoints removed) and a spec for every API and queue",
+  ],
+  skills: [
+    "java",
+    "spring-boot",
+    "rabbitmq",
+    "kong",
+    "api-security",
+    "integration-design",
+    "event-driven",
+    "resilience",
+    "postgresql",
+    "docker",
+    "kubernetes",
+    "azure",
+    "ci-cd",
+    "elasticsearch",
+    "observability",
+    "feature-flags",
+    "testing",
+    "code-quality",
+    "documentation",
+    "ai-assisted",
+  ],
+  footprint: [
+    { metric: "commits across 11 repositories", value: "1,400+" },
+    { metric: "use cases in the business API", value: "~370" },
+    { metric: "external systems behind it", value: "29" },
+    { metric: "test coverage, up from 30-40%", value: "~80%" },
+  ],
+  architecture: insuranceArchitecture,
+};

@@ -1,0 +1,136 @@
+import type { CaseStudyInput } from "../schema";
+
+export const agenticEngineering: CaseStudyInput = {
+  slug: "agentic-engineering",
+  project: "auction-saas",
+  title: "Coding agents on production code, verified",
+  tagline:
+    "Claude Code every day across nine repositories, with the context, scoping and verification that make its output safe to ship.",
+  role: "Daily practice · agent context across 9 repos",
+  featured: true,
+  accent: "#9cff57",
+  skills: [
+    "ai-assisted",
+    "context-engineering",
+    "ai-evaluation",
+    "testing",
+    "documentation",
+    "java",
+    "python",
+  ],
+  context:
+    "I use Claude Code daily on the platform's repositories: the backend, two Angular apps and the Lambdas. An agent is only as good as the context it starts with and the checks its output has to pass, so most of the work is the setup around it, and the discipline not to trust a confident summary.",
+  constraints: [
+    "Production code: a plausible but wrong change costs real customer data",
+    "A 5,000-commit backend, two Angular apps and several Lambdas, each with its own conventions",
+    "Some harnesses are broken: one Angular test suite can't compile, the admin app has no test runner",
+    "Production runs Aurora MySQL 5.7; local development runs 8.0",
+  ],
+  approach: [
+    "Durable context in the repo: a CLAUDE.md in every repository I work in, scoped rule files and per-feature reference docs. I'm the main author of them; the backend's CLAUDE.md alone has 76 of my commits.",
+    "Plan mode before any cross-cutting change, so the model's understanding is checked before code exists; tasks written with explicit non-goals.",
+    "Subagents for repo-wide searches, keeping the main context on the task.",
+    "Verification outside the agent: read the diff, run the suite, and break the implementation on purpose to make sure a new test fails.",
+    "Mutation testing (PIT) on the backend to measure whether tests catch broken behaviour, not just whether lines run.",
+    "Where a harness is broken, verify through extracted pure functions run under esbuild/Node, and gate on the production build.",
+  ],
+  decisions: [
+    {
+      title: "Context lives in the repo, not in a prompt",
+      why: "Every session, and every teammate, starts from the same conventions. Stale context then becomes a visible bug to fix rather than a silent drift.",
+      tradeoff: "The docs are ongoing work and have to be kept true.",
+    },
+    {
+      title: "Trust the running system, not the agent's report",
+      why: "Agent output can compile, pass its tests and still be wrong. The diff, the suite and the real environment are the only acceptance criteria.",
+      tradeoff: "Slower per change; much cheaper per incident.",
+    },
+    {
+      title: "Measure test strength, not coverage",
+      why: "76% line coverage on the ZIP chunk planner hid three surviving mutants: an untested overload, an unpinned byte boundary and a zero-versus-null case.",
+      tradeoff: "Mutation runs must be scoped to one class; unscoped they take hours.",
+    },
+  ],
+  outcomes: [
+    { metric: "repos with agent context I maintain", value: "9" },
+    { metric: "chunk planner mutation score", value: "80 → 100%" },
+    { metric: "commits to the backend's CLAUDE.md", value: "76" },
+  ],
+  retrospective: [
+    {
+      title: "Wrong output that looked right",
+      body: "Two services implemented the same seven export filters. 'New images only' deleted existing photos on update instead of keeping them. It compiled, its tests passed and it matched a reasonable reading of the requirement. Comparing the implementations filter by filter found it, along with a lot-range parsing off-by-one.",
+    },
+    {
+      title: "Green locally, unsafe in production",
+      body: "SQL that is valid on MySQL 8.0 but not on production's Aurora 5.7 passed every local check. It was caught before release, and the rule now lives in the repo context so no session repeats it.",
+    },
+  ],
+  architecture: {
+    direction: "LR",
+    nodes: [
+      {
+        id: "task",
+        label: "Scoped task",
+        sub: "goal · non-goals",
+        kind: "client",
+        owner: "built",
+        x: 0,
+        y: 0,
+      },
+      {
+        id: "context",
+        label: "Repo context",
+        sub: "CLAUDE.md · rules · docs",
+        kind: "datastore",
+        owner: "built",
+        x: 0,
+        y: 1.4,
+      },
+      {
+        id: "agent",
+        label: "Claude Code",
+        sub: "plan mode · subagents",
+        kind: "service",
+        owner: "external",
+        x: 1.7,
+        y: 0.7,
+      },
+      {
+        id: "review",
+        label: "Review",
+        sub: "read the diff",
+        kind: "client",
+        owner: "built",
+        x: 3.4,
+        y: 0.7,
+      },
+      {
+        id: "verify",
+        label: "Verification",
+        sub: "suite · break it · PIT",
+        kind: "service",
+        owner: "built",
+        x: 5.1,
+        y: 0.7,
+      },
+      {
+        id: "system",
+        label: "Running system",
+        sub: "real data · Aurora 5.7",
+        kind: "service",
+        owner: "platform",
+        x: 6.8,
+        y: 0.7,
+      },
+    ],
+    edges: [
+      { from: "task", to: "agent", kind: "http", label: "plan first" },
+      { from: "context", to: "agent", kind: "data", label: "every session" },
+      { from: "agent", to: "review", kind: "invoke", label: "change" },
+      { from: "review", to: "verify", kind: "http" },
+      { from: "verify", to: "system", kind: "http", label: "ship if it holds" },
+      { from: "verify", to: "context", kind: "data", label: "lessons fed back" },
+    ],
+  },
+};

@@ -1,0 +1,151 @@
+import type { CaseStudyInput } from "../schema";
+
+export const java21Migration: CaseStudyInput = {
+  slug: "java21-migration",
+  project: "insurance-api",
+  title: "Java 11 → 21 across a whole ecosystem",
+  tagline:
+    "Spring Boot 2 to 3.5 for six services and tools plus the shared BOM, including ~30 integration modules and generated SOAP clients, without a feature freeze.",
+  role: "Led the business API's upgrade · five more services and the BOM",
+  featured: true,
+  accent: "#2bdc6a",
+  skills: [
+    "java",
+    "spring-boot",
+    "testing",
+    "integration-design",
+    "docker",
+    "ci-cd",
+    "documentation",
+  ],
+  context:
+    "The platform ran on Java 11 and Spring Boot 2.x, which was approaching end of support and blocking current library and security updates. The services share a BOM and a commons library, so the upgrade had to be coordinated across many repositories. The hardest part was the business API: about 30 integration modules, generated SOAP models for the core insurance system, and hundreds of use cases.",
+  constraints: [
+    "javax → jakarta across the whole codebase",
+    "Generated SOAP clients that had to be regenerated with a Jakarta-compatible CXF",
+    "Libraries that no longer fit the new stack, such as Springfox",
+    "No feature freeze: business work continued throughout",
+  ],
+  approach: [
+    "Business API (led and executed): Java 21 and Spring Boot 3.5, with the compiler, surefire and CXF code-generation plugins brought up to date.",
+    "Regenerated the SOAP client models with a Jakarta-compatible CXF and updated the XSD namespaces; replaced removed or incompatible APIs.",
+    "Aligned the Jakarta-related versions in the shared BOM (OpenAPI, FOP, JAX-WS, SAAJ) so every consumer resolves one compatible set.",
+    "Upgraded the callback dispatcher, the maintenance dashboard, the configuration guardian and the batch jobs the same way, fixing the framework-specific breakages each one surfaced.",
+    "Upgraded the Person Referential jointly with a colleague.",
+    "Recorded the steps and the maintenance rules in a migration guide in the repository.",
+    "Led the re-enablement of the E2E suite, which had been switched off during the migration: fixed tests and fixtures, added a shared fixed clock, and added tests for under-covered areas.",
+  ],
+  decisions: [
+    {
+      title: "Align the BOM first",
+      why: "Every service inherits its versions from the BOM. One compatible Jakarta set there meant each service upgrade was a code change, not a version hunt.",
+      tradeoff:
+        "Consumers pin commons versions, so its release process had to stay careful about compatibility.",
+    },
+    {
+      title: "Regenerate the SOAP clients rather than patch them",
+      why: "Hand-editing generated models for the jakarta namespace would have been undone by the next generation run.",
+      tradeoff: "A large diff to review, checked against the E2E suite.",
+    },
+    {
+      title: "Not done until the E2E suite runs again",
+      why: "The suite was the regression net for hundreds of use cases. Without it the migration was unverified.",
+      tradeoff:
+        "More work after the code compiled: fixtures, a deterministic clock and missing tests.",
+    },
+  ],
+  outcomes: [
+    { metric: "services and tools upgraded, plus the BOM", value: "6" },
+    { metric: "new baseline", value: "Java 21" },
+    { metric: "Spring Boot", value: "2 → 3.5" },
+    { metric: "feature freeze needed", value: "none" },
+  ],
+  retrospective: [
+    {
+      title: "Shared work, stated plainly",
+      body: "The Person Referential was upgraded jointly with a colleague, and other teams upgraded the affiliation backend, the gateway helper and the shared libraries in the same programme.",
+    },
+    {
+      title: "What I'd change",
+      body: "Keep the E2E suite running through the migration instead of switching it off and re-enabling it afterwards. Fixing it at the end cost more than keeping it green would have.",
+    },
+  ],
+  architecture: {
+    direction: "LR",
+    nodes: [
+      {
+        id: "bom",
+        label: "Shared BOM",
+        sub: "one Jakarta-compatible set",
+        kind: "datastore",
+        owner: "contributed",
+        x: 0,
+        y: 1.2,
+      },
+      {
+        id: "commons",
+        label: "Shared commons",
+        sub: "upgraded by another team",
+        kind: "datastore",
+        owner: "integrated",
+        x: 1.7,
+        y: 1.2,
+      },
+      {
+        id: "bapi",
+        label: "Business API",
+        sub: "~30 modules · SOAP clients",
+        kind: "service",
+        owner: "built",
+        x: 3.4,
+        y: 0,
+      },
+      {
+        id: "person-ref",
+        label: "Person Referential",
+        sub: "jointly with a colleague",
+        kind: "service",
+        owner: "contributed",
+        x: 3.4,
+        y: 1.2,
+      },
+      {
+        id: "tools",
+        label: "Dispatcher · dashboard · guardian · batch",
+        sub: "same recipe",
+        kind: "service",
+        owner: "contributed",
+        x: 3.4,
+        y: 2.4,
+      },
+      {
+        id: "e2e",
+        label: "E2E suite",
+        sub: "re-enabled · fixed clock",
+        kind: "service",
+        owner: "built",
+        x: 5.1,
+        y: 0,
+      },
+      {
+        id: "baseline",
+        label: "Java 21 · Spring Boot 3.5",
+        sub: "one baseline",
+        kind: "external",
+        owner: "platform",
+        x: 5.1,
+        y: 1.2,
+      },
+    ],
+    edges: [
+      { from: "bom", to: "commons", kind: "data", label: "versions" },
+      { from: "commons", to: "bapi", kind: "data" },
+      { from: "commons", to: "person-ref", kind: "data" },
+      { from: "commons", to: "tools", kind: "data" },
+      { from: "bapi", to: "e2e", kind: "invoke", label: "regression net" },
+      { from: "bapi", to: "baseline", kind: "data" },
+      { from: "person-ref", to: "baseline", kind: "data" },
+      { from: "tools", to: "baseline", kind: "data" },
+    ],
+  },
+};
